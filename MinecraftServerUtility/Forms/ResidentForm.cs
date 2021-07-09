@@ -13,7 +13,9 @@ namespace MinecraftServerUtility.Forms
 {
     public partial class ResidentForm : MetroForm
     {
-
+        /// <summary>
+        /// サーバー PID
+        /// </summary>
         public static int? serverProcessId = null;
 
         public ResidentForm()
@@ -21,7 +23,11 @@ namespace MinecraftServerUtility.Forms
             InitializeComponent();
         }
 
-
+        /// <summary>
+        /// 開く
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormCollection fc = Application.OpenForms;
@@ -38,6 +44,11 @@ namespace MinecraftServerUtility.Forms
             mainForm.Show();
         }
 
+        /// <summary>
+        /// 終了
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CloseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //アプリケーションを終了する

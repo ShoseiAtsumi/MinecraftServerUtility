@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MetroFramework.Forms;
 using MinecraftServerUtility.Utility;
-using System.IO;
 
 namespace MinecraftServerUtility.Forms
 {
@@ -24,54 +17,102 @@ namespace MinecraftServerUtility.Forms
             InitializeComponent();
         }
 
+        /// <summary>
+        /// ロード
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
             Reload();
             // 非同期処理をCancelするためのTokenを取得.
             cancellationTokenSource = new CancellationTokenSource();
             var cancelToken = cancellationTokenSource.Token;
+            // 更新処理開始
             updateTask = Task.Run(() => StartUpdate(cancelToken));
         }
 
+        /// <summary>
+        /// クローズ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // タスクを終了
             cancellationTokenSource.Cancel();
         }
 
+        /// <summary>
+        /// 再読み込み
+        /// </summary>
         private void Reload()
         {
+            // デフォルト
             cmbMemoryValue.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// 更新処理開始
+        /// </summary>
+        /// <param name="cancelToken"></param>
         private void StartUpdate(CancellationToken cancelToken)
         {
+            //更新
             while (true)
             {
+                //　終了？
                 if (cancelToken.IsCancellationRequested)
                 {
                     // キャンセルされたらTaskを終了する.
                     return;
                 }
+                
+                // サーバー稼働状態更新
                 this.Invoke(new Action(this.UpdateServerStatus));
                 Thread.Sleep(1000);
             }
         }
 
+        /// <summary>
+        /// サーバーが稼働しているかチェックし更新
+        /// </summary>
         public void UpdateServerStatus()
         {
-            if(ResidentForm.serverProcessId == null)TextBoxServerStatus.Text = "Server is down";
-            else TextBoxServerStatus.Text = "Server is running";
+            // サーバーが稼働していたら
+            if(isServerRunning()) TextBoxServerStatus.Text = "Server is running";
+            else TextBoxServerStatus.Text = "Server is down";
         }
 
+        /// <summary>
+        /// サーバーの稼働状態を取得
+        /// </summary>
+        /// <returns></returns>
+        private bool isServerRunning()
+        {
+            // サーバーが稼働しているか? 
+            return ResidentForm.serverProcessId != null;
+        }
+
+        /// <summary>
+        /// サーバー起動ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnEexcute_Click(object sender, EventArgs e)
         {
+            // サーバーが稼働しているかチェック
+            if (isServerRunning()) return;
             var serverPath = string.Empty;
             var config = string.Empty;
+
+            // サーバー実行ファイルとコンフィグを取得
             serverPath = string.IsNullOrEmpty(TextBoxServerPath.Text) ? string.Empty : TextBoxServerPath.Text;
             config = string.IsNullOrEmpty(TextBoxConfigStr.Text) ? string.Empty : TextBoxConfigStr.Text;
             ServerExecuter serverExecuter = new ServerExecuter();
             try
             {
+                // サーバー起動
                 Task.Run(() => serverExecuter.KickProcess(serverPath, config));
             }
             catch
@@ -80,6 +121,11 @@ namespace MinecraftServerUtility.Forms
             }
         }
 
+        /// <summary>
+        /// サーバー実行ファイルを選択
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SeverPathSelectButton_Click(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog()
@@ -97,6 +143,11 @@ namespace MinecraftServerUtility.Forms
             }
         }
 
+        /// <summary>
+        /// コンフィグを生成
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CreateConfig(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(this.TextBoxServerPath.Text)) return;

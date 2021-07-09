@@ -247,8 +247,10 @@ namespace MinecraftServerUtility.Forms
             this.Controls.Add(this.DownloadFolderLabel);
             this.Controls.Add(this.TextBoxServerPath);
             this.Controls.Add(this.btnEexcute);
+            this.MaximumSize = new System.Drawing.Size(483, 238);
+            this.MinimumSize = new System.Drawing.Size(483, 238);
             this.Name = "MainForm";
-            this.Text = "MainForm";
+            this.Text = "SeverSetting";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);

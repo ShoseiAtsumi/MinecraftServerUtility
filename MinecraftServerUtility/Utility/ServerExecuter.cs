@@ -15,6 +15,11 @@ namespace MinecraftServerUtility.Utility
 
         }
 
+        /// <summary>
+        /// サーバーを起動
+        /// </summary>
+        /// <param name="severPath"></param>
+        /// <param name="config"></param>
         public void KickProcess(string severPath, string config)
         {
             try
